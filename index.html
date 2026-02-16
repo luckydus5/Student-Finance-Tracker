@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Student Finance Tracker - Track your expenses, manage budgets, and stay on top of your student finances">
+    <title>Student Finance Tracker</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+</head>
+<body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header class="site-header" role="banner">
+        <div class="header-container">
+            <h1 class="logo">
+                <span class="logo-icon" aria-hidden="true">$</span>
+                Student Finance Tracker
+            </h1>
+            <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav" aria-label="Toggle navigation menu">
+                <span class="hamburger"></span>
+            </button>
+            <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+                <ul class="nav-list">
+                    <li><a href="#dashboard" class="nav-link active" data-section="dashboard">Dashboard</a></li>
+                    <li><a href="#transactions" class="nav-link" data-section="transactions">Transactions</a></li>
+                    <li><a href="#add-transaction" class="nav-link" data-section="add-transaction">Add New</a></li>
+                    <li><a href="#settings" class="nav-link" data-section="settings">Settings</a></li>
+                    <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <!-- Live region for announcements -->
+        <div id="live-region" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+        <div id="alert-region" class="visually-hidden" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section section--active" aria-labelledby="dashboard-heading">
+            <h2 id="dashboard-heading" class="section-title">Dashboard</h2>
+            
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <h3 class="stat-label">Total Transactions</h3>
+                    <p class="stat-value" id="stat-total-count">0</p>
+                </article>
+                <article class="stat-card">
+                    <h3 class="stat-label">Total Spent</h3>
+                    <p class="stat-value" id="stat-total-amount">$0.00</p>
+                </article>
+                <article class="stat-card">
+                    <h3 class="stat-label">Top Category</h3>
+                    <p class="stat-value" id="stat-top-category">-</p>
+                </article>
+                <article class="stat-card stat-card--budget">
+                    <h3 class="stat-label">Budget Status</h3>
+                    <p class="stat-value" id="stat-budget-status">$0.00 remaining</p>
+                    <div class="budget-bar">
+                        <div class="budget-bar-fill" id="budget-bar-fill" style="width: 0%"></div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Last 7 Days Spending</h3>
+                <div class="chart" id="spending-chart" role="img" aria-label="Bar chart showing spending over the last 7 days">
+                    <!-- Chart bars will be inserted here -->
+                </div>
+            </div>
+
+            <div class="recent-transactions">
+                <h3 class="section-subtitle">Recent Transactions</h3>
+                <div id="recent-list" class="transaction-list">
+                    <!-- Recent transactions will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Transactions Section -->
+        <section id="transactions" class="section" aria-labelledby="transactions-heading" hidden>
+            <h2 id="transactions-heading" class="section-title">All Transactions</h2>
+            
+            <!-- Search and Filter Controls -->
+            <div class="controls-bar">
+                <div class="search-container">
+                    <label for="search-input" class="visually-hidden">Search transactions</label>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        class="search-input" 
+                        placeholder="Search (regex supported)..."
+                        aria-describedby="search-help"
+                    >
+                    <div class="search-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="case-insensitive" checked>
+                            <span>Case insensitive</span>
+                        </label>
+                    </div>
+                    <p id="search-help" class="help-text">
+                        Try: <code>/\.\d{2}\b/</code> for cents, <code>/(coffee|tea)/i</code> for beverages
+                    </p>
+                    <p id="search-error" class="error-text" role="alert" hidden></p>
+                </div>
+                
+                <div class="sort-container">
+                    <label for="sort-select">Sort by:</label>
+                    <select id="sort-select" class="sort-select">
+                        <option value="date-desc">Date (Newest)</option>
+                        <option value="date-asc">Date (Oldest)</option>
+                        <option value="description-asc">Description (A-Z)</option>
+                        <option value="description-desc">Description (Z-A)</option>
+                        <option value="amount-desc">Amount (High-Low)</option>
+                        <option value="amount-asc">Amount (Low-High)</option>
+                    </select>
+                </div>
+
+                <div class="filter-container">
+                    <label for="category-filter">Category:</label>
+                    <select id="category-filter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <!-- Categories will be populated dynamically -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Transactions Table (Desktop) / Cards (Mobile) -->
+            <div class="table-container">
+                <table class="transactions-table" id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="sortable" data-sort="date">
+                                Date
+                                <span class="sort-indicator" aria-hidden="true"></span>
+                            </th>
+                            <th scope="col" class="sortable" data-sort="description">
+                                Description
+                                <span class="sort-indicator" aria-hidden="true"></span>
+                            </th>
+                            <th scope="col">Category</th>
+                            <th scope="col" class="sortable" data-sort="amount">
+                                Amount
+                                <span class="sort-indicator" aria-hidden="true"></span>
+                            </th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-body">
+                        <!-- Transaction rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Cards View -->
+            <div class="cards-container" id="transactions-cards">
+                <!-- Transaction cards will be inserted here -->
+            </div>
+
+            <p class="no-results" id="no-results" hidden>No transactions found matching your criteria.</p>
+        </section>
+
+        <!-- Add/Edit Transaction Section -->
+        <section id="add-transaction" class="section" aria-labelledby="add-transaction-heading" hidden>
+            <h2 id="add-transaction-heading" class="section-title">
+                <span id="form-title">Add New Transaction</span>
+            </h2>
+
+            <form id="transaction-form" class="transaction-form" novalidate>
+                <input type="hidden" id="edit-id" value="">
+
+                <div class="form-group">
+                    <label for="description" class="form-label">
+                        Description <span class="required" aria-hidden="true">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="description" 
+                        name="description"
+                        class="form-input" 
+                        required
+                        aria-describedby="description-error description-hint"
+                        autocomplete="off"
+                    >
+                    <p id="description-hint" class="hint-text">No leading/trailing spaces; no consecutive spaces</p>
+                    <p id="description-error" class="error-text" role="alert" hidden></p>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="amount" class="form-label">
+                            Amount <span class="required" aria-hidden="true">*</span>
+                        </label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix" id="currency-prefix">$</span>
+                            <input 
+                                type="text" 
+                                id="amount" 
+                                name="amount"
+                                class="form-input" 
+                                inputmode="decimal"
+                                required
+                                aria-describedby="amount-error amount-hint"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <p id="amount-hint" class="hint-text">Format: 0.00 (up to 2 decimal places)</p>
+                        <p id="amount-error" class="error-text" role="alert" hidden></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date" class="form-label">
+                            Date <span class="required" aria-hidden="true">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="date" 
+                            name="date"
+                            class="form-input" 
+                            placeholder="YYYY-MM-DD"
+                            required
+                            aria-describedby="date-error date-hint"
+                            autocomplete="off"
+                        >
+                        <p id="date-hint" class="hint-text">Format: YYYY-MM-DD</p>
+                        <p id="date-error" class="error-text" role="alert" hidden></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="category" class="form-label">
+                        Category <span class="required" aria-hidden="true">*</span>
+                    </label>
+                    <select id="category" name="category" class="form-input form-select" required aria-describedby="category-error">
+                        <option value="">Select a category</option>
+                        <!-- Categories will be populated dynamically -->
+                    </select>
+                    <p id="category-error" class="error-text" role="alert" hidden></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="custom-category" class="form-label">Or add custom category</label>
+                    <input 
+                        type="text" 
+                        id="custom-category" 
+                        name="custom-category"
+                        class="form-input" 
+                        placeholder="e.g., Subscriptions"
+                        aria-describedby="custom-category-error custom-category-hint"
+                        autocomplete="off"
+                    >
+                    <p id="custom-category-hint" class="hint-text">Letters, spaces, and hyphens only</p>
+                    <p id="custom-category-error" class="error-text" role="alert" hidden></p>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn--primary" id="submit-btn">
+                        <span id="submit-text">Add Transaction</span>
+                    </button>
+                    <button type="button" class="btn btn--secondary" id="cancel-btn" hidden>Cancel Edit</button>
+                    <button type="reset" class="btn btn--outline">Clear Form</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section" aria-labelledby="settings-heading" hidden>
+            <h2 id="settings-heading" class="section-title">Settings</h2>
+
+            <div class="settings-grid">
+                <!-- Budget Settings -->
+                <article class="settings-card">
+                    <h3 class="settings-card-title">Budget Cap</h3>
+                    <div class="form-group">
+                        <label for="budget-cap" class="form-label">Monthly Budget Limit</label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">$</span>
+                            <input 
+                                type="text" 
+                                id="budget-cap" 
+                                class="form-input" 
+                                inputmode="decimal"
+                                aria-describedby="budget-hint"
+                            >
+                        </div>
+                        <p id="budget-hint" class="hint-text">Set to 0 for no limit</p>
+                    </div>
+                    <button type="button" class="btn btn--primary" id="save-budget">Save Budget</button>
+                </article>
+
+                <!-- Currency Settings -->
+                <article class="settings-card">
+                    <h3 class="settings-card-title">Currency Settings</h3>
+                    <div class="form-group">
+                        <label for="base-currency" class="form-label">Base Currency</label>
+                        <select id="base-currency" class="form-input form-select">
+                            <option value="USD" selected>USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="RWF">RWF (FRw)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="display-currency" class="form-label">Display Currency</label>
+                        <select id="display-currency" class="form-input form-select">
+                            <option value="USD" selected>USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="RWF">RWF (FRw)</option>
+                        </select>
+                    </div>
+                    <h4 class="settings-subtitle">Exchange Rates (to USD)</h4>
+                    <div class="rate-inputs">
+                        <div class="form-group">
+                            <label for="rate-eur" class="form-label">1 EUR =</label>
+                            <div class="input-with-suffix">
+                                <input type="text" id="rate-eur" class="form-input" value="1.08" inputmode="decimal">
+                                <span class="input-suffix">USD</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="rate-rwf" class="form-label">1 RWF =</label>
+                            <div class="input-with-suffix">
+                                <input type="text" id="rate-rwf" class="form-input" value="0.00073" inputmode="decimal">
+                                <span class="input-suffix">USD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn--primary" id="save-currency">Save Currency Settings</button>
+                </article>
+
+                <!-- Categories Settings -->
+                <article class="settings-card">
+                    <h3 class="settings-card-title">Categories</h3>
+                    <ul class="categories-list" id="categories-list">
+                        <!-- Categories will be populated dynamically -->
+                    </ul>
+                    <div class="form-group">
+                        <label for="new-category" class="form-label">Add New Category</label>
+                        <div class="input-with-button">
+                            <input 
+                                type="text" 
+                                id="new-category" 
+                                class="form-input" 
+                                placeholder="Category name"
+                                aria-describedby="new-category-error"
+                            >
+                            <button type="button" class="btn btn--primary" id="add-category-btn">Add</button>
+                        </div>
+                        <p id="new-category-error" class="error-text" role="alert" hidden></p>
+                    </div>
+                </article>
+
+                <!-- Data Management -->
+                <article class="settings-card settings-card--wide">
+                    <h3 class="settings-card-title">Data Management</h3>
+                    <div class="data-actions">
+                        <div class="data-action">
+                            <h4>Export Data</h4>
+                            <p>Download all your transactions as a JSON file.</p>
+                            <button type="button" class="btn btn--secondary" id="export-btn">
+                                Export JSON
+                            </button>
+                        </div>
+                        <div class="data-action">
+                            <h4>Import Data</h4>
+                            <p>Load transactions from a JSON file. Existing data will be replaced.</p>
+                            <label for="import-file" class="btn btn--secondary">
+                                Import JSON
+                                <input type="file" id="import-file" accept=".json" class="visually-hidden">
+                            </label>
+                        </div>
+                        <div class="data-action data-action--danger">
+                            <h4>Clear All Data</h4>
+                            <p>Permanently delete all transactions. This cannot be undone.</p>
+                            <button type="button" class="btn btn--danger" id="clear-data-btn">
+                                Clear All Data
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section" aria-labelledby="about-heading" hidden>
+            <h2 id="about-heading" class="section-title">About</h2>
+            
+            <article class="about-content">
+                <h3>Student Finance Tracker</h3>
+                <p>
+                    A simple, accessible, and responsive web application designed to help students 
+                    manage their finances effectively. Track your daily expenses, set budgets, 
+                    and gain insights into your spending habits.
+                </p>
+
+                <h4>Features</h4>
+                <ul class="features-list">
+                    <li>Dashboard with spending statistics and trends</li>
+                    <li>Add, edit, and delete transactions</li>
+                    <li>Powerful regex-based search</li>
+                    <li>Import/Export data as JSON</li>
+                    <li>Multiple currency support with manual exchange rates</li>
+                    <li>Budget cap with alerts</li>
+                    <li>Fully accessible with keyboard navigation</li>
+                    <li>Responsive design for all devices</li>
+                </ul>
+
+                <h4>Contact</h4>
+                <address class="contact-info">
+                    <p>
+                        <strong>GitHub:</strong> 
+                        <a href="https://github.com/luckydus5" target="_blank" rel="noopener noreferrer">
+                            github.com/luckydus5
+                        </a>
+                    </p>
+                    <p>
+                        <strong>Email:</strong> 
+                        <a href="mailto:O.dusabamah@alustudent.com">O.dusabamah@alustudent.com</a>
+                    </p>
+                </address>
+
+                <h4>Keyboard Shortcuts</h4>
+                <dl class="keyboard-shortcuts">
+                    <dt><kbd>Tab</kbd></dt>
+                    <dd>Navigate between focusable elements</dd>
+                    <dt><kbd>Enter</kbd></dt>
+                    <dd>Activate buttons and links</dd>
+                    <dt><kbd>Escape</kbd></dt>
+                    <dd>Close dialogs and cancel edits</dd>
+                    <dt><kbd>1</kbd>-<kbd>5</kbd></dt>
+                    <dd>Navigate to sections (when not in input)</dd>
+                </dl>
+            </article>
+        </section>
+    </main>
+
+    <!-- Delete Confirmation Dialog -->
+    <dialog id="delete-dialog" class="modal" aria-labelledby="dialog-title" aria-describedby="dialog-desc">
+        <div class="modal-content">
+            <h2 id="dialog-title">Confirm Delete</h2>
+            <p id="dialog-desc">Are you sure you want to delete this transaction? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn--danger" id="confirm-delete">Delete</button>
+                <button type="button" class="btn btn--secondary" id="cancel-delete">Cancel</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Footer -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-container">
+            <p>&copy; 2025 Student Finance Tracker. Built for educational purposes.</p>
+            <p>
+                <a href="#about">About</a> | 
+                <a href="tests.html">Run Tests</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="scripts/app.js"></script>
+</body>
+</html>

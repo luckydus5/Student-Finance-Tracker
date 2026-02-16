@@ -1,0 +1,393 @@
+/* Responsive Styles - Mobile-first with breakpoints at 360px, 768px, 1024px */
+
+/* Small Mobile (360px base - default styles)
+ */
+
+/* Default styles in main.css and components.css handle small mobile */
+
+/* Medium Mobile and Small Tablets (min-width: 480px)
+ */
+
+@media (min-width: 480px) {
+    /* Stats grid - 2 columns */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Form row - side by side */
+    .form-row {
+        flex-direction: row;
+    }
+
+    .form-row .form-group {
+        flex: 1;
+    }
+
+    /* Chart bars larger */
+    .chart-bar-fill {
+        max-width: 50px;
+    }
+
+    /* Settings grid - sometimes 2 columns */
+    .rate-inputs {
+        flex-direction: row;
+    }
+
+    .rate-inputs .form-group {
+        flex: 1;
+    }
+}
+
+/* Tablets (min-width: 768px)
+ */
+
+@media (min-width: 768px) {
+    /* Root adjustments */
+    :root {
+        --font-size-base: 1rem;
+        --spacing-md: 1.25rem;
+        --spacing-lg: 2rem;
+    }
+
+    /* Header layout */
+    .header-container {
+        flex-wrap: nowrap;
+    }
+
+    .menu-toggle {
+        display: none;
+    }
+
+    .main-nav {
+        display: block;
+        width: auto;
+    }
+
+    .nav-list {
+        flex-direction: row;
+        gap: var(--spacing-xs);
+    }
+
+    .nav-link {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    /* Main content padding */
+    .main-content {
+        padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    /* Section title */
+    .section-title {
+        font-size: var(--font-size-3xl);
+    }
+
+    /* Stats grid - 4 columns */
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-card--budget {
+        grid-column: span 2;
+    }
+
+    /* Controls bar - horizontal */
+    .controls-bar {
+        flex-direction: row;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .search-container {
+        flex: 2;
+        min-width: 250px;
+    }
+
+    .sort-container,
+    .filter-container {
+        min-width: 150px;
+    }
+
+    /* Show table, hide cards */
+    .table-container {
+        display: block;
+    }
+
+    .cards-container {
+        display: none;
+    }
+
+    /* Chart height */
+    .chart {
+        height: 200px;
+    }
+
+    .chart-bar-fill {
+        max-width: 60px;
+    }
+
+    /* Settings grid - 2 columns */
+    .settings-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .settings-card--wide {
+        grid-column: span 2;
+    }
+
+    /* Data actions horizontal */
+    .data-actions {
+        flex-direction: row;
+    }
+
+    .data-action {
+        flex: 1;
+    }
+
+    /* Features list - 2 columns */
+    .features-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Modal */
+    .modal {
+        max-width: 450px;
+    }
+}
+
+/* Desktop (min-width: 1024px)
+ */
+
+@media (min-width: 1024px) {
+    /* Header */
+    .logo {
+        font-size: var(--font-size-xl);
+    }
+
+    .nav-link {
+        padding: var(--spacing-sm) var(--spacing-lg);
+    }
+
+    /* Main content max width */
+    .main-content {
+        padding: var(--spacing-2xl) var(--spacing-xl);
+    }
+
+    /* Stats with hover effect more pronounced */
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    /* Chart */
+    .chart {
+        height: 250px;
+    }
+
+    /* Transaction table - more spacious */
+    .transactions-table th,
+    .transactions-table td {
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+
+    /* Settings grid - adjust layout */
+    .settings-card {
+        padding: var(--spacing-xl);
+    }
+
+    /* About content */
+    .about-content {
+        padding: var(--spacing-2xl);
+    }
+
+    .keyboard-shortcuts {
+        max-width: 600px;
+    }
+}
+
+/* Large Desktop (min-width: 1280px)
+ */
+
+@media (min-width: 1280px) {
+    /* Increase max-width */
+    .header-container,
+    .main-content,
+    .footer-container {
+        max-width: 1400px;
+    }
+
+    /* Even more spacious */
+    .main-content {
+        padding: var(--spacing-2xl);
+    }
+}
+
+/* Print Styles
+ */
+
+@media print {
+    /* Hide non-essential elements */
+    .skip-link,
+    .menu-toggle,
+    .main-nav,
+    .site-footer,
+    .form-actions,
+    .transaction-actions,
+    .card-actions,
+    .controls-bar,
+    .settings-card,
+    .modal,
+    #add-transaction,
+    #settings {
+        display: none !important;
+    }
+
+    /* Reset colors */
+    :root {
+        --color-primary: #000;
+        --color-text: #000;
+        --color-background: #fff;
+        --color-surface: #fff;
+    }
+
+    /* Remove shadows and animations */
+    * {
+        box-shadow: none !important;
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* Ensure tables print properly */
+    .table-container {
+        display: block !important;
+        overflow: visible;
+    }
+
+    .transactions-table {
+        min-width: auto;
+    }
+
+    /* Page breaks */
+    .stat-card,
+    .transaction-card {
+        break-inside: avoid;
+    }
+
+    /* Show all sections */
+    .section {
+        display: block !important;
+        page-break-before: always;
+    }
+
+    .section:first-of-type {
+        page-break-before: auto;
+    }
+}
+
+/* Dark Mode Support (Optional - responds to system preference)
+ */
+
+@media (prefers-color-scheme: dark) {
+    /* Uncomment to enable automatic dark mode
+    :root {
+        --color-primary: #60a5fa;
+        --color-primary-dark: #3b82f6;
+        --color-primary-light: #93c5fd;
+        
+        --color-text: #e2e8f0;
+        --color-text-muted: #94a3b8;
+        --color-background: #0f172a;
+        --color-surface: #1e293b;
+        --color-border: #334155;
+        
+        --color-gray-50: #1e293b;
+        --color-gray-100: #334155;
+        --color-gray-200: #475569;
+        --color-gray-900: #f1f5f9;
+    }
+
+    .transactions-table th {
+        background-color: var(--color-gray-100);
+    }
+
+    .data-action {
+        background-color: var(--color-gray-100);
+    }
+
+    .data-action--danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    mark {
+        background-color: #854d0e;
+        color: #fef08a;
+    }
+    */
+}
+
+/* Touch Device Optimizations
+ */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .btn {
+        min-height: 48px;
+        min-width: 48px;
+    }
+
+    .nav-link {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-input,
+    .form-select {
+        min-height: 48px;
+    }
+
+    /* Remove hover effects that don't work on touch */
+    .stat-card:hover,
+    .transaction-card:hover {
+        transform: none;
+    }
+
+    .transactions-table tbody tr:hover {
+        background-color: transparent;
+    }
+}
+
+/* High Resolution Displays
+ */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Thinner borders for retina displays */
+    .form-input,
+    .btn {
+        border-width: 1px;
+    }
+}
+
+/* Landscape Phone Optimization
+ */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    /* Reduce vertical spacing */
+    .main-content {
+        padding-top: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+    }
+
+    .section-title {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .stats-grid {
+        margin-bottom: var(--spacing-md);
+    }
+
+    /* Shorter chart */
+    .chart {
+        height: 120px;
+    }
+}

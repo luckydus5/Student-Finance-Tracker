@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Finance Tracker - Tests</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+
+        h1, h2 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        h2 {
+            margin-top: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #2563eb;
+        }
+
+        .test-summary {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .test-summary.all-passed {
+            border-left: 4px solid #22c55e;
+        }
+
+        .test-summary.has-failures {
+            border-left: 4px solid #ef4444;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .stat-value.passed {
+            color: #22c55e;
+        }
+
+        .stat-value.failed {
+            color: #ef4444;
+        }
+
+        .test-group {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .test-case {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .test-case:last-child {
+            border-bottom: none;
+        }
+
+        .test-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .test-icon.pass {
+            background-color: #22c55e;
+        }
+
+        .test-icon.fail {
+            background-color: #ef4444;
+        }
+
+        .test-details {
+            flex: 1;
+        }
+
+        .test-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .test-message {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .test-message.error {
+            color: #ef4444;
+        }
+
+        .pattern-box {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background-color: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        a {
+            color: #2563eb;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .spinner {
+            margin: 2rem 0;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to App</a>
+    
+    <h1>Validation Tests</h1>
+    
+    <div id="test-summary" class="test-summary">
+        <p class="spinner">Running tests...</p>
+    </div>
+
+    <div id="test-results"></div>
+
+    <script type="module">
+        import * as validators from './scripts/validators.js';
+        import { compileRegex, highlight, escapeHTML } from './scripts/search.js';
+
+        // ==========================================================================
+        // Test Framework
+        // ==========================================================================
+
+        const results = {
+            passed: 0,
+            failed: 0,
+            groups: []
+        };
+
+        function assert(condition, testName, message = '') {
+            if (condition) {
+                results.passed++;
+                return { passed: true, name: testName, message };
+            } else {
+                results.failed++;
+                return { passed: false, name: testName, message };
+            }
+        }
+
+        function testGroup(name, tests) {
+            const groupResults = [];
+            tests.forEach(test => {
+                try {
+                    groupResults.push(test());
+                } catch (error) {
+                    results.failed++;
+                    groupResults.push({
+                        passed: false,
+                        name: 'Error',
+                        message: error.message
+                    });
+                }
+            });
+            results.groups.push({ name, results: groupResults });
+        }
+
+        // ==========================================================================
+        // Description Validation Tests
+        // ==========================================================================
+
+        testGroup('Description Validation', [
+            () => assert(
+                validators.validateDescription('Hello World').valid === true,
+                'Valid description accepted',
+                '"Hello World" should be valid'
+            ),
+            () => assert(
+                validators.validateDescription(' leading space').valid === false,
+                'Leading space rejected',
+                'Should reject leading spaces'
+            ),
+            () => assert(
+                validators.validateDescription('trailing space ').valid === false,
+                'Trailing space rejected',
+                'Should reject trailing spaces'
+            ),
+            () => assert(
+                validators.validateDescription('double  spaces').valid === false,
+                'Double spaces rejected',
+                'Should reject consecutive spaces'
+            ),
+            () => assert(
+                validators.validateDescription('the the cat').valid === false,
+                'Duplicate words rejected (back-reference)',
+                '"the the" detected as duplicate using \\b(\\w+)\\s+\\1\\b'
+            ),
+            () => assert(
+                validators.validateDescription('very very good').valid === false,
+                'Another duplicate words test',
+                '"very very" should be rejected'
+            ),
+            () => assert(
+                validators.validateDescription('A').valid === false,
+                'Single character rejected',
+                'Minimum length is 2 characters'
+            ),
+            () => assert(
+                validators.validateDescription('').valid === false,
+                'Empty string rejected',
+                'Description is required'
+            ),
+            () => assert(
+                validators.validateDescription('Buy groceries').valid === true,
+                'Normal description valid',
+                '"Buy groceries" should pass'
+            )
+        ]);
+
+        // ==========================================================================
+        // Amount Validation Tests
+        // ==========================================================================
+
+        testGroup('Amount Validation', [
+            () => assert(
+                validators.validateAmount('12.50').valid === true,
+                'Valid amount with cents',
+                '"12.50" is valid'
+            ),
+            () => assert(
+                validators.validateAmount('0').valid === true,
+                'Zero is valid',
+                '"0" should be accepted'
+            ),
+            () => assert(
+                validators.validateAmount('0.99').valid === true,
+                'Cents only valid',
+                '"0.99" should be accepted'
+            ),
+            () => assert(
+                validators.validateAmount('100').valid === true,
+                'Whole number valid',
+                '"100" should be accepted'
+            ),
+            () => assert(
+                validators.validateAmount('01').valid === false,
+                'Leading zero rejected',
+                '"01" should be rejected'
+            ),
+            () => assert(
+                validators.validateAmount('.50').valid === false,
+                'Missing integer part rejected',
+                '".50" should be rejected'
+            ),
+            () => assert(
+                validators.validateAmount('12.999').valid === false,
+                'More than 2 decimals rejected',
+                '"12.999" should be rejected'
+            ),
+            () => assert(
+                validators.validateAmount('abc').valid === false,
+                'Non-numeric rejected',
+                '"abc" should be rejected'
+            ),
+            () => assert(
+                validators.validateAmount('12.5').valid === true,
+                'Single decimal valid',
+                '"12.5" should be accepted'
+            )
+        ]);
+
+        // ==========================================================================
+        // Date Validation Tests
+        // ==========================================================================
+
+        testGroup('Date Validation (YYYY-MM-DD)', [
+            () => assert(
+                validators.validateDate('2025-09-15').valid === true,
+                'Valid date accepted',
+                '"2025-09-15" is valid'
+            ),
+            () => assert(
+                validators.validateDate('2025-01-01').valid === true,
+                'January 1st valid',
+                '"2025-01-01" should be accepted'
+            ),
+            () => assert(
+                validators.validateDate('2025-12-31').valid === true,
+                'December 31st valid',
+                '"2025-12-31" should be accepted'
+            ),
+            () => assert(
+                validators.validateDate('2025-13-01').valid === false,
+                'Invalid month rejected',
+                '"2025-13-01" should be rejected (month > 12)'
+            ),
+            () => assert(
+                validators.validateDate('2025-00-15').valid === false,
+                'Zero month rejected',
+                '"2025-00-15" should be rejected'
+            ),
+            () => assert(
+                validators.validateDate('2025-02-30').valid === false,
+                'Invalid February date rejected',
+                '"2025-02-30" should be rejected (Feb has max 29 days)'
+            ),
+            () => assert(
+                validators.validateDate('25-01-01').valid === false,
+                'Two-digit year rejected',
+                '"25-01-01" should be rejected'
+            ),
+            () => assert(
+                validators.validateDate('2025/01/01').valid === false,
+                'Wrong separator rejected',
+                '"2025/01/01" should be rejected'
+            ),
+            () => assert(
+                validators.validateDate('').valid === false,
+                'Empty date rejected',
+                'Date is required'
+            )
+        ]);
+
+        // ==========================================================================
+        // Category Validation Tests
+        // ==========================================================================
+
+        testGroup('Category Validation', [
+            () => assert(
+                validators.validateCategory('Food').valid === true,
+                'Simple category valid',
+                '"Food" should be accepted'
+            ),
+            () => assert(
+                validators.validateCategory('Fast Food').valid === true,
+                'Category with space valid',
+                '"Fast Food" should be accepted'
+            ),
+            () => assert(
+                validators.validateCategory('Self-Care').valid === true,
+                'Category with hyphen valid',
+                '"Self-Care" should be accepted'
+            ),
+            () => assert(
+                validators.validateCategory('Food123').valid === false,
+                'Numbers in category rejected',
+                '"Food123" should be rejected'
+            ),
+            () => assert(
+                validators.validateCategory('under_score').valid === false,
+                'Underscore rejected',
+                '"under_score" should be rejected'
+            ),
+            () => assert(
+                validators.validateCategory('').valid === false,
+                'Empty category rejected',
+                'Category is required'
+            ),
+            () => assert(
+                validators.validateCategory('A').valid === false,
+                'Single char category rejected',
+                'Minimum length is 2 characters'
+            )
+        ]);
+
+        // ==========================================================================
+        // Regex Compilation Tests
+        // ==========================================================================
+
+        testGroup('Safe Regex Compilation', [
+            () => {
+                const result = compileRegex('hello');
+                return assert(
+                    result.regex !== null && result.error === null,
+                    'Simple pattern compiles',
+                    '"hello" compiles successfully'
+                );
+            },
+            () => {
+                const result = compileRegex('(coffee|tea)');
+                return assert(
+                    result.regex !== null,
+                    'Alternation pattern compiles',
+                    '"(coffee|tea)" compiles successfully'
+                );
+            },
+            () => {
+                const result = compileRegex('\\.\\d{2}\\b');
+                return assert(
+                    result.regex !== null,
+                    'Cents pattern compiles',
+                    '"\\.\\d{2}\\b" compiles for finding amounts with cents'
+                );
+            },
+            () => {
+                const result = compileRegex('\\b(\\w+)\\s+\\1\\b');
+                return assert(
+                    result.regex !== null,
+                    'Back-reference pattern compiles',
+                    'Duplicate word detection pattern compiles'
+                );
+            },
+            () => {
+                const result = compileRegex('[invalid');
+                return assert(
+                    result.regex === null && result.error !== null,
+                    'Invalid pattern returns error',
+                    '"[invalid" should fail to compile'
+                );
+            },
+            () => {
+                const result = compileRegex('');
+                return assert(
+                    result.regex === null && result.error === null,
+                    'Empty pattern returns null (no error)',
+                    'Empty string means no search filter'
+                );
+            }
+        ]);
+
+        // ==========================================================================
+        // Highlight Function Tests
+        // ==========================================================================
+
+        testGroup('Search Highlighting', [
+            () => {
+                const regex = compileRegex('coffee').regex;
+                const result = highlight('Coffee at cafe', regex);
+                return assert(
+                    result.includes('<mark>'),
+                    'Highlights matching text',
+                    '"coffee" gets wrapped in <mark> tags'
+                );
+            },
+            () => {
+                const result = highlight('Hello', null);
+                return assert(
+                    !result.includes('<mark>'),
+                    'No highlight without regex',
+                    'Returns plain text when regex is null'
+                );
+            },
+            () => {
+                const regex = compileRegex('test').regex;
+                const result = highlight('<script>alert("xss")</script>', regex);
+                return assert(
+                    !result.includes('<script>'),
+                    'HTML is escaped (XSS prevention)',
+                    'Script tags are escaped'
+                );
+            },
+            () => {
+                const regex = compileRegex('\\d+').regex;
+                const result = highlight('Price: 12.50', regex);
+                return assert(
+                    result.includes('<mark>12</mark>'),
+                    'Regex patterns work for highlighting',
+                    'Numeric pattern matches numbers'
+                );
+            }
+        ]);
+
+        // ==========================================================================
+        // Import Validation Tests
+        // ==========================================================================
+
+        testGroup('Import Data Validation', [
+            () => {
+                const validData = [{
+                    description: 'Test',
+                    amount: 10,
+                    category: 'Food',
+                    date: '2025-01-01'
+                }];
+                const result = validators.validateImportData(validData);
+                return assert(
+                    result.valid === true,
+                    'Valid import data accepted',
+                    'Single valid transaction passes'
+                );
+            },
+            () => {
+                const result = validators.validateImportData('not an array');
+                return assert(
+                    result.valid === false,
+                    'Non-array rejected',
+                    'Import data must be an array'
+                );
+            },
+            () => {
+                const result = validators.validateImportData([]);
+                return assert(
+                    result.valid === false,
+                    'Empty array rejected',
+                    'At least one transaction required'
+                );
+            },
+            () => {
+                const invalidData = [{
+                    description: 'Test'
+                    // missing required fields
+                }];
+                const result = validators.validateImportData(invalidData);
+                return assert(
+                    result.valid === false,
+                    'Missing fields rejected',
+                    'Amount, category, date required'
+                );
+            }
+        ]);
+
+        // ==========================================================================
+        // Regex Pattern Examples Tests
+        // ==========================================================================
+
+        testGroup('Advanced Regex Patterns', [
+            () => {
+                // Duplicate word detection using back-reference
+                const pattern = validators.PATTERNS.duplicateWord;
+                const text1 = 'the the cat';
+                const text2 = 'the cat';
+                return assert(
+                    pattern.test(text1) && !pattern.test(text2.replace(pattern, '')),
+                    'Back-reference: Duplicate word detection',
+                    '\\b(\\w+)\\s+\\1\\b matches "the the" but not "the cat"'
+                );
+            },
+            () => {
+                // Cents detection
+                const pattern = validators.PATTERNS.withCents;
+                return assert(
+                    pattern.test('12.50') && pattern.test('0.99') && !pattern.test('100'),
+                    'Cents detection pattern',
+                    '\\.\\d{2}\\b matches amounts ending in .XX'
+                );
+            },
+            () => {
+                // Lookahead for password strength (example)
+                const pattern = validators.PATTERNS.strongPassword;
+                return assert(
+                    pattern.test('Password1') && !pattern.test('weakpass'),
+                    'Lookahead: Password strength',
+                    '(?=.*[a-z])(?=.*[A-Z])(?=.*\\d) requires mixed case and number'
+                );
+            },
+            () => {
+                // Beverage detection
+                const pattern = validators.PATTERNS.beverages;
+                return assert(
+                    pattern.test('Coffee at cafe') && pattern.test('green TEA'),
+                    'Case-insensitive beverage match',
+                    '(coffee|tea|juice|water|soda|drink) with i flag'
+                );
+            }
+        ]);
+
+        // ==========================================================================
+        // Render Results
+        // ==========================================================================
+
+        function renderResults() {
+            const summaryEl = document.getElementById('test-summary');
+            const resultsEl = document.getElementById('test-results');
+
+            // Summary
+            const allPassed = results.failed === 0;
+            summaryEl.className = `test-summary ${allPassed ? 'all-passed' : 'has-failures'}`;
+            summaryEl.innerHTML = `
+                <h2>${allPassed ? '✓ All Tests Passed!' : '✗ Some Tests Failed'}</h2>
+                <div class="summary-stats">
+                    <div class="stat">
+                        <span class="stat-label">Total:</span>
+                        <span class="stat-value">${results.passed + results.failed}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Passed:</span>
+                        <span class="stat-value passed">${results.passed}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Failed:</span>
+                        <span class="stat-value failed">${results.failed}</span>
+                    </div>
+                </div>
+            `;
+
+            // Detailed results
+            let html = '';
+            results.groups.forEach(group => {
+                html += `
+                    <div class="test-group">
+                        <h2>${group.name}</h2>
+                        ${group.results.map(test => `
+                            <div class="test-case">
+                                <div class="test-icon ${test.passed ? 'pass' : 'fail'}">
+                                    ${test.passed ? '✓' : '✗'}
+                                </div>
+                                <div class="test-details">
+                                    <div class="test-name">${test.name}</div>
+                                    <div class="test-message ${test.passed ? '' : 'error'}">
+                                        ${test.message}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+
+            resultsEl.innerHTML = html;
+        }
+
+        // Run render after all tests complete
+        renderResults();
+    </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+[
+    {
+        "id": "txn_001",
+        "description": "Lunch at cafeteria",
+        "amount": 12.50,
+        "category": "Food",
+        "date": "2025-09-25",
+        "createdAt": "2025-09-25T12:30:00.000Z",
+        "updatedAt": "2025-09-25T12:30:00.000Z"
+    },
+    {
+        "id": "txn_002",
+        "description": "Chemistry textbook purchase",
+        "amount": 89.99,
+        "category": "Books",
+        "date": "2025-09-23",
+        "createdAt": "2025-09-23T14:15:00.000Z",
+        "updatedAt": "2025-09-23T14:15:00.000Z"
+    },
+    {
+        "id": "txn_003",
+        "description": "Monthly bus pass",
+        "amount": 45.00,
+        "category": "Transport",
+        "date": "2025-09-20",
+        "createdAt": "2025-09-20T09:00:00.000Z",
+        "updatedAt": "2025-09-20T09:00:00.000Z"
+    },
+    {
+        "id": "txn_004",
+        "description": "Coffee with friends",
+        "amount": 8.75,
+        "category": "Entertainment",
+        "date": "2025-09-28",
+        "createdAt": "2025-09-28T16:45:00.000Z",
+        "updatedAt": "2025-09-28T16:45:00.000Z"
+    },
+    {
+        "id": "txn_005",
+        "description": "Semester tuition fees",
+        "amount": 2500.00,
+        "category": "Fees",
+        "date": "2025-09-01",
+        "createdAt": "2025-09-01T10:00:00.000Z",
+        "updatedAt": "2025-09-01T10:00:00.000Z"
+    },
+    {
+        "id": "txn_006",
+        "description": "Groceries for the week",
+        "amount": 67.43,
+        "category": "Food",
+        "date": "2025-09-27",
+        "createdAt": "2025-09-27T18:20:00.000Z",
+        "updatedAt": "2025-09-27T18:20:00.000Z"
+    },
+    {
+        "id": "txn_007",
+        "description": "Movie night tickets",
+        "amount": 24.00,
+        "category": "Entertainment",
+        "date": "2025-09-26",
+        "createdAt": "2025-09-26T20:00:00.000Z",
+        "updatedAt": "2025-09-26T20:00:00.000Z"
+    },
+    {
+        "id": "txn_008",
+        "description": "Calculator for math class",
+        "amount": 35.99,
+        "category": "Books",
+        "date": "2025-09-22",
+        "createdAt": "2025-09-22T11:30:00.000Z",
+        "updatedAt": "2025-09-22T11:30:00.000Z"
+    },
+    {
+        "id": "txn_009",
+        "description": "Uber ride to campus",
+        "amount": 15.50,
+        "category": "Transport",
+        "date": "2025-09-24",
+        "createdAt": "2025-09-24T08:30:00.000Z",
+        "updatedAt": "2025-09-24T08:30:00.000Z"
+    },
+    {
+        "id": "txn_010",
+        "description": "Lab coat and goggles",
+        "amount": 42.00,
+        "category": "Other",
+        "date": "2025-09-21",
+        "createdAt": "2025-09-21T13:00:00.000Z",
+        "updatedAt": "2025-09-21T13:00:00.000Z"
+    },
+    {
+        "id": "txn_011",
+        "description": "Tea and snacks at library",
+        "amount": 5.25,
+        "category": "Food",
+        "date": "2025-09-29",
+        "createdAt": "2025-09-29T15:00:00.000Z",
+        "updatedAt": "2025-09-29T15:00:00.000Z"
+    },
+    {
+        "id": "txn_012",
+        "description": "Gym membership annual fee",
+        "amount": 199.00,
+        "category": "Other",
+        "date": "2025-09-15",
+        "createdAt": "2025-09-15T10:00:00.000Z",
+        "updatedAt": "2025-09-15T10:00:00.000Z"
+    },
+    {
+        "id": "txn_013",
+        "description": "Breakfast combo deal",
+        "amount": 7.99,
+        "category": "Food",
+        "date": "2025-09-30",
+        "createdAt": "2025-09-30T08:00:00.000Z",
+        "updatedAt": "2025-09-30T08:00:00.000Z"
+    },
+    {
+        "id": "txn_014",
+        "description": "Psychology course materials",
+        "amount": 55.00,
+        "category": "Books",
+        "date": "2025-09-18",
+        "createdAt": "2025-09-18T14:00:00.000Z",
+        "updatedAt": "2025-09-18T14:00:00.000Z"
+    },
+    {
+        "id": "txn_015",
+        "description": "Phone top-up credits",
+        "amount": 20.00,
+        "category": "Other",
+        "date": "2025-09-19",
+        "createdAt": "2025-09-19T16:30:00.000Z",
+        "updatedAt": "2025-09-19T16:30:00.000Z"
+    }
+]
