@@ -4,7 +4,7 @@ A fully accessible, responsive, vanilla HTML/CSS/JavaScript web application for 
 
 ## Live Demo
 
-**GitHub Pages URL:** [https://luckydus5.github.io/Student-Finance-Tracker-Olivier-Dusabamahoro](https://luckydus5.github.io/Student-Finance-Tracker-Olivier-Dusabamahoro)
+**GitHub Pages URL:** [https://luckydus5.github.io/Student-Finance-Tracker](https://luckydus5.github.io/Student-Finance-Tracker/)
 
 ## Chosen Theme
 
