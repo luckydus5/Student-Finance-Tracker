@@ -227,7 +227,7 @@ Categories can be added/removed in Settings.
 
 - **Name:** Olivier Dusabamahoro
 - **GitHub:** [luckydus5](https://github.com/luckydus5)
-- **Email:** O.dusabamah@alustudent.com
+- **Email:** o.dusabamah@alustudent.com
 
 ## License
 
