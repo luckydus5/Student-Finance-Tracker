@@ -6,6 +6,12 @@ A fully accessible, responsive, vanilla HTML/CSS/JavaScript web application for 
 
 **GitHub Pages URL:** [https://luckydus5.github.io/Student-Finance-Tracker](https://luckydus5.github.io/Student-Finance-Tracker/)
 
+## Demo Video
+
+Watch the demo: [https://www.youtube.com/watch?v=0V9dTjF1eRo](https://www.youtube.com/watch?v=0V9dTjF1eRo)
+
+About the video: This short walkthrough demonstrates the core flows of the Student Finance Tracker — adding and editing transactions, using the regex search, switching currencies, and viewing the dashboard and 7-day spending chart. The video is presented by Olivier Dusabaamhoro and shows the app running in the browser with example data.
+
 ## Chosen Theme
 
 **Student Finance Tracker** - A budgeting application designed for students to track their daily expenses, categorize spending, set budget limits, and see where their money goes.
